@@ -315,10 +315,10 @@ textarea {
 
 
 /*决策支持fix*/
-#dayPage h1, #monthPage h1, #yearPage h1{
-    margin:0;
-    padding:0;
-    overflow: visible;
+.fixh1{
+    margin:0 !important;
+    padding:0 !important;
+    overflow: visible !important;
 }
 
 #my-company .ui-controlgroup-controls{
