@@ -329,3 +329,16 @@ textarea {
     width:50%;
     box-sizing: border-box;
 }
+/*信息-消息详情*/
+#messageCon h2{
+    color: #323232;
+    text-indent: 2em;
+    margin: 15px 0 14px 0;
+}
+#messageCon .time{
+    color: #989898;
+}
+#messageCon p{
+    color: #646464;
+    text-indent: 2em;
+}
