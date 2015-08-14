@@ -342,3 +342,10 @@ textarea {
     color: #646464;
     text-indent: 2em;
 }
+/*工厂介绍-详情*/
+#companyIntro  li:first-child{
+    font-size: 14px;
+}
+#companyIntro li p{
+    font-size: 13px;
+}
