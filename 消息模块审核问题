@@ -1,0 +1,13 @@
+消息模块：
+    messageCon.html页面，消息切换卡效果没有实现， 消息详情页字体大小和行间距与UI上有出入，另外背景色要设置上。请仔细审核
+工厂介绍模块：
+    companyIntroduct.html页面，字体大小，行间距，padding,margin等细节问题
+设置模块：
+    此模块问题不大，待定制jqm主题再做进一步处理
+我的工厂模块：
+    从首页进入【我的工厂】模块时会出现明显的css加载延时  （index.html--->我的工厂/myCompany.html）
+    链接问题：myCompany.html图---->stitchesTreend.html页面----->dayStitches.html
+    页面局部布局：dayPunch.html内容两列排版
+决策支持模块：
+    加载延时问题
+    factory.html / machine.html 页面加载不出或错/后退有错
