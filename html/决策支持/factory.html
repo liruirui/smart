@@ -26,11 +26,58 @@
     </div>
     <!--/头部-->
     <div data-role="content">
-        日信息绘图区域
+        <!--饼状图绘制区域-->
+        <div id="factory-pie"></div>
     </div>
 </div>
 <script src="../../js/jquery-1.11.3.min.js"></script>
 <script src="../../js/jquery.mobile.js"></script>
 <script src="../../js/d3.js"></script>
+<script>
+    var width = 600;
+    var height = 600;
+    var dataset = [30, 10, 43, 55, 13];
+
+    var svg = d3.select("#factory-pie").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+    var pie = d3.layout.pie();
+
+    var outerRadius = width / 2;
+    var innerRadius = width / 4;
+    var arc = d3.svg.arc()
+            .innerRadius(innerRadius)
+            .outerRadius(outerRadius);
+
+    var color = d3.scale.category10();
+
+    var arcs = svg.selectAll("g")
+            .data(pie(dataset))
+            .enter()
+            .append("g")
+            .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
+
+    arcs.append("path")
+            .attr("fill", function (d, i) {
+                return color(i);
+            })
+            .attr("d", function (d) {
+                return arc(d);
+            });
+
+    arcs.append("text")
+            .attr("transform", function (d) {
+                return "translate(" + arc.centroid(d) + ")";
+            })
+            .attr("text-anchor", "middle")
+            .text(function (d) {
+                return d.value;
+            });
+
+    console.log(dataset);
+    console.log(pie(dataset));
+
+</script>
 </body>
 </html>
