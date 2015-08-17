@@ -262,15 +262,17 @@ textarea {
         page-break-after: avoid;
     }
 }
+
 .ui-page-theme-a .ui-bar-x {
     border: 1px solid #FFF;
-    background:#C31F26;
-    color:#FFF;
+    background: #C31F26;
+    color: #FFF;
     font-weight: normal;
-    font-size:20px;
+    font-size: 20px;
 }
-.ui-page-theme-a .ui-bar-x a{
-  padding-top: 17px;
+
+.ui-page-theme-a .ui-bar-x a {
+    padding-top: 17px;
 }
 .dis-block{display:block}
 .mt8{margin-top:8px !important;}
@@ -386,7 +388,6 @@ textarea {
 #dayPunch .ui-listview > li div {
     color: #787878;
 }
-
 
 /*每日针数详情页柱状图样式*/
 #NNeedl {
