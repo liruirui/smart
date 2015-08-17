@@ -263,6 +263,9 @@ textarea {
     }
 }
 
+#dayPunch .em2 {
+    text-indent: 2em !important;
+}
 .dis-block{display:block}
 .mt8{margin-top:8px !important;}
 .mt20{margin-top:20px !important;}
@@ -364,4 +367,16 @@ textarea {
 
 .punch-time {
     margin: 0 0 10px 0;
+}
+
+#dayPunch .ui-listview > li .mtitle {
+    font-size: 1.15em;
+}
+
+#dayPunch .ui-listview > li p span {
+    margin-right: 2em;
+}
+
+#dayPunch .ui-listview > li div {
+    color: #787878;
 }
