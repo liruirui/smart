@@ -10,13 +10,14 @@
 <body>
 <div data-role="page" id="dayStitches">
     <div data-role="header">
-        <a href="myCompany.html" data-role="button" data-icon="arrow-l" data-iconpos="notext"></a>
+        <a href="myCompany.html" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-ajax='false'></a>
         <h1>每日针数</h1>
     </div>
     <!--/head-->
     <div data-role="content">
         <p class="ui-li-aside">2015/2/25</p>
-        <!--/图表-->
+        <div id="NNeedl"></div>
+        <!--/针数趋势图表-->
         <ul data-role="listview">
             <li data-icon="false"><a href="#">机器NO.1  生产针数：<span class="ui-li-count">5000</span></a></li>
             <li data-icon="false"><a href="#">机器NO.2  生产针数：<span class="ui-li-count">5000</span></a></li>
@@ -31,5 +32,43 @@
 <script src="../../js/jquery-1.11.3.min.js"></script>
 <script src="../../js/jquery.mobile.js"></script>
 <script src="../../js/d3.js"></script>
+<script>
+    var width = "100%";
+    var height = "100%";
+    var dataset = [ 30 , 20 , 45 , 12 , 21 ];
+
+    var svg = d3.select("#NNeedl").append("svg")
+            .attr("width",width)
+            .attr("height",height);
+
+    /*绘制比例尺*/
+    var xScale = d3.scale.linear()
+            .domain([0,d3.max(dataset)])
+            .range([0,500]);
+
+    /*绘制坐标轴*/
+    //对坐标轴进行配置
+    var axis = d3.svg.axis()
+            .scale(xScale)
+            .orient("bottom");
+
+    //绘制坐标轴
+    svg.append("g")
+            .attr("class","axis")
+            .attr("transform","translate(10,160)")
+            .call(axis);
+
+    svg.selectAll("rect")
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("x",10)
+            .attr("y",function(d,i){
+                return i * 30;
+            })
+            .attr("width",xScale)           //注意这里
+            .attr("height",28)
+            .attr("fill","#ddd");
+</script>
 </body>
 </html>

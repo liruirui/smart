@@ -22,7 +22,8 @@
     </div>
     <!--/head-->
     <div data-role="content">
-        工厂-日信息绘图区域
+        <!--多条折线图绘制区域-->
+        <div id="multi-piece"></div>
     </div>
     <!--/content-->
 </div>
@@ -30,5 +31,298 @@
 <script src="../../../js/jquery-1.11.3.min.js"></script>
 <script src="../../../js/jquery.mobile.js"></script>
 <script src="../../../js/d3.js"></script>
+<script type="text/javascript">
+    function lineChart() {
+        var _chart = {};
+
+        var _width = screen.width * 0.9, _height = 350,
+                _margins = {top: 30, left: 50, right: 30, bottom: 30},
+                _x, _y,
+                _data = [],
+                _colors = d3.scale.category10(),
+                _svg,
+                _bodyG,
+                _line;
+
+        _chart.render = function () {
+            if (!_svg) {
+                _svg = d3.select("#multi-piece").append("div")
+                        .style("text-align", "center")
+                        .append("svg")
+                        .attr("height", _height)
+                        .attr("width", _width);
+
+                renderAxes(_svg);
+
+                defineBodyClip(_svg);
+            }
+
+            renderBody(_svg);
+        };
+
+        function renderAxes(svg) {
+            var axesG = svg.append("g")
+                    .attr("class", "axes");
+
+            renderXAxis(axesG);
+
+            renderYAxis(axesG);
+        }
+
+        function renderXAxis(axesG){
+            var xAxis = d3.svg.axis()
+                    .scale(_x.range([0, quadrantWidth()]))
+                    .orient("bottom");
+
+            axesG.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", function () {
+                        return "translate(" + xStart() + "," + yStart() + ")";
+                    })
+                    .call(xAxis);
+
+            d3.selectAll("g.x g.tick")
+                    .append("line")
+                    .classed("grid-line", true)
+                    .attr("x1", 0)
+                    .attr("y1", 0)
+                    .attr("x2", 0)
+                    .attr("y2", - quadrantHeight());
+        }
+
+        function renderYAxis(axesG){
+            var yAxis = d3.svg.axis()
+                    .scale(_y.range([quadrantHeight(), 0]))
+                    .orient("left");
+
+            axesG.append("g")
+                    .attr("class", "y axis")
+                    .attr("transform", function () {
+                        return "translate(" + xStart() + "," + yEnd() + ")";
+                    })
+                    .call(yAxis);
+
+            d3.selectAll("g.y g.tick")
+                    .append("line")
+                    .classed("grid-line", true)
+                    .attr("x1", 0)
+                    .attr("y1", 0)
+                    .attr("x2", quadrantWidth())
+                    .attr("y2", 0);
+        }
+
+        function defineBodyClip(svg) {
+            var padding = 5;
+
+            svg.append("defs")
+                    .append("clipPath")
+                    .attr("id", "body-clip")
+                    .append("rect")
+                    .attr("x", 0 - padding)
+                    .attr("y", 0)
+                    .attr("width", quadrantWidth() + 2 * padding)
+                    .attr("height", quadrantHeight());
+        }
+
+        function renderBody(svg) {
+            if (!_bodyG)
+                _bodyG = svg.append("g")
+                        .attr("class", "body")
+                        .attr("transform", "translate("
+                        + xStart() + ","
+                        + yEnd() + ")")
+                        .attr("clip-path", "url(#body-clip)");
+
+            renderLines();
+
+            renderDots();
+        }
+
+        function renderLines() {
+            _line = d3.svg.line()
+                    .x(function (d) { return _x(d.date); })
+                    .y(function (d) { return _y(d.value); });
+
+            _bodyG.selectAll("path.line")
+                    .data(_data)
+                    .enter()
+                    .append("path")
+                    .style("stroke", function (d, i) {
+                        return _colors(i);
+                    })
+                    .attr("class", "line");
+
+            _bodyG.selectAll("path.line")
+                    .data(_data)
+                    .exit()
+                    .remove();
+
+            _bodyG.selectAll("path.line")
+                    .transition()
+                    .duration(1000)
+                    .attr("d", function (d) { return _line(d); });
+        }
+
+        function renderDots() {
+            _data.forEach(function (list, i) {
+                _bodyG.selectAll("circle._" + i)
+                        .data(list)
+                        .enter()
+                        .append("circle")
+                        .attr("class", "dot _" + i);
+
+                _bodyG.selectAll("circle._" + i)
+                        .data(list)
+                        .exit()
+                        .remove();
+
+                _bodyG.selectAll("circle._" + i)
+                        .data(list)
+                        .style("stroke", function (d) {
+                            return _colors(i);
+                        })
+                        .transition()
+                        .duration(1000)
+                        .attr("cx", function (d) { return _x(d.date); })
+                        .attr("cy", function (d) { return _y(d.value); })
+                        .attr("r", 3.5);
+            });
+        }
+
+        function xStart() {
+            return _margins.left;
+        }
+
+        function yStart() {
+            return _height - _margins.bottom;
+        }
+
+        function xEnd() {
+            return _width - _margins.right;
+        }
+
+        function yEnd() {
+            return _margins.top;
+        }
+
+        function quadrantWidth() {
+            return _width - _margins.left - _margins.right;
+        }
+
+        function quadrantHeight() {
+            return _height - _margins.top - _margins.bottom;
+        }
+
+        _chart.width = function (w) {
+            if (!arguments.length) return _width;
+            _width = w;
+            return _chart;
+        };
+
+        _chart.height = function (h) {
+            if (!arguments.length) return _height;
+            _height = h;
+            return _chart;
+        };
+
+        _chart.margins = function (m) {
+            if (!arguments.length) return _margins;
+            _margins = m;
+            return _chart;
+        };
+
+        _chart.colors = function (c) {
+            if (!arguments.length) return _colors;
+            _colors = c;
+            return _chart;
+        };
+
+        _chart.x = function (x) {
+            if (!arguments.length) return _x;
+            _x = x;
+            return _chart;
+        };
+
+        _chart.y = function (y) {
+            if (!arguments.length) return _y;
+            _y = y;
+            return _chart;
+        };
+
+        _chart.addSeries = function (series) {
+            _data.push(series);
+            return _chart;
+        };
+
+        return _chart;
+    }
+
+    function randomData() {
+        return Math.random() * 9;
+    }
+
+    function update() {
+        for (var i = 0; i < data.length; ++i) {
+            var series = data[i];
+            series.length = 0;
+            for (var j = 0; j < numberOfDataPoint; ++j)
+                series.push({x: j, y: randomData()});
+        }
+
+        chart.render();
+    }
+
+    var names = [];
+    var data = [];
+    var minvalue = 0, maxvalue = 0;
+    var mindate = 0, maxdate = 0;
+
+    var timeformat = d3.time.format("%Y-%m");
+
+    var chart;
+
+//    <pre name="code" class="javascript">//load data
+    d3.text("data.json", function(rawdatastr){
+        var rawdata = JSON.parse(rawdatastr);
+        names = d3.keys(rawdata);
+        names.forEach(function(name){
+            var list = rawdata[name].map(function(item){
+                return {
+                    "date": timeformat.parse(item.date),
+                    "value": item.value
+                }
+            });
+
+            //get min and max value
+            if(minvalue == 0){
+                minvalue = d3.min(list, function(d){return d.value;});
+            }else{
+                minvalue = d3.min([minvalue, d3.min(list, function(d){return d.value;})]);
+            }
+            maxvalue = d3.max([maxvalue, d3.max(list, function(d){return d.value;})]);
+
+            //get min and max date
+            if(mindate == 0){
+                mindate = d3.min(list, function(d){return d.date;});
+            }
+            if(maxdate == 0){
+                maxdate = d3.max(list, function(d){return d.date;});
+            }
+
+            data.push(list);
+        });
+
+        chart = lineChart()
+                .x(d3.time.scale().domain([mindate, maxdate]))
+                .y(d3.scale.linear().domain([minvalue * 0.5, maxvalue * 1.02]));
+
+        data.forEach(function (series) {
+            chart.addSeries(series);
+        });
+
+        chart.render();
+    });
+
+</script>
 </body>
 </html>
